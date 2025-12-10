@@ -4,7 +4,7 @@ import MessagesPage from "./pages/MessagesPage.jsx";
 
 function App() {
     return (
-        <div className="min-h-screen gold-animated-bg text-white p-6">
+        <div className="min-h-screen bg-slate-950 text-white">
             <AccessGate>
                 <MessagesPage />
             </AccessGate>

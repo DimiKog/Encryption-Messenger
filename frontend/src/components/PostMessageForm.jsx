@@ -33,14 +33,14 @@ const PostMessageForm = ({ walletAddress }) => {
             <input
                 type="text"
                 placeholder="Recipient Address"
-                className="w-full gold-input text-sm mb-4"
+                className="w-full px-3 py-2 bg-slate-900 text-white placeholder-slate-400 border border-slate-700 rounded text-sm focus:outline-none focus:border-yellow-400 mb-4"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
             />
 
             <textarea
                 placeholder="Encrypted message (ciphertext)"
-                className="w-full gold-input text-sm font-mono h-36 resize-none"
+                className="w-full px-3 py-2 bg-slate-900 text-white placeholder-slate-400 border border-slate-700 rounded text-sm font-mono h-36 resize-none focus:outline-none focus:border-yellow-400"
                 value={ciphertext}
                 onChange={(e) => setCiphertext(e.target.value)}
             />

@@ -50,7 +50,7 @@ const MessageBoard = ({ walletAddress }) => {
                             <textarea
                                 readOnly
                                 value={msg.ciphertext}
-                                className="w-full bg-black/30 text-yellow-100 border border-yellow-500/40 rounded-xl p-3 text-xs font-mono h-40 resize-none shadow-inner focus:outline-none"
+                                className="w-full px-3 py-2 bg-slate-900 text-white placeholder-slate-400 border border-slate-700 rounded-lg text-xs font-mono h-40 resize-none focus:outline-none focus:border-yellow-400 shadow-inner"
                             ></textarea>
                         </div>
                     ))}

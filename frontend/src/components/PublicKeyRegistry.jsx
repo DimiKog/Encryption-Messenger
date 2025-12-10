@@ -65,14 +65,14 @@ const PublicKeyRegistry = ({ walletAddress }) => {
                 <input
                     type="text"
                     placeholder="Nickname (optional)"
-                    className="w-full gold-input text-sm"
+                    className="w-full px-3 py-2 bg-slate-900 text-white placeholder-slate-400 border border-slate-700 rounded text-sm focus:outline-none focus:border-yellow-400"
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                 />
 
                 <textarea
                     placeholder="Paste your public key here"
-                    className="w-full gold-input text-sm h-24 font-mono"
+                    className="w-full h-24 px-3 py-2 bg-slate-900 text-white placeholder-slate-400 border border-slate-700 rounded text-sm font-mono resize-none focus:outline-none focus:border-yellow-400"
                     value={publicKey}
                     onChange={(e) => setPublicKey(e.target.value)}
                 />
