@@ -6,7 +6,7 @@ from pathlib import Path
 from datetime import datetime
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 DATA_DIR = Path(__file__).parent / "data"
 DATA_DIR.mkdir(exist_ok=True)
@@ -90,5 +90,14 @@ def messages():
     return jsonify({"status": "ok"})
 
 
+@app.route("/api/messages/<address>", methods=["GET"])
+def messages_for_address(address):
+    """Return only messages sent TO the specified wallet address."""
+    all_messages = load_json(MESSAGES_FILE, [])
+    filtered = [m for m in all_messages if m.get("to", "").lower() == address.lower()]
+    return jsonify(filtered)
+
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    # Production-safe: do NOT use debug, do NOT expose to public network
+    app.run(host="127.0.0.1", port=5001, debug=False)

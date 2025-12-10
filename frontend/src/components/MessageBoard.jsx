@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5001/api";
+const API_BASE = "https://dltlabs-api.dimikog.org/api";
 
 const MessageBoard = ({ walletAddress }) => {
     const [messages, setMessages] = useState([]);
@@ -22,14 +22,14 @@ const MessageBoard = ({ walletAddress }) => {
     );
 
     return (
-        <div className="bg-slate-800/80 border border-slate-700 rounded-xl p-4">
-            <h2 className="text-lg font-semibold mb-3">Encrypted Message Board</h2>
-            <p className="text-sm text-slate-400 mb-3">
+        <div className="glass-gold gold-border-soft rounded-2xl p-10 text-center space-y-8 max-w-xl mx-auto">
+            <h2 className="text-3xl font-bold gold-text mb-4 tracking-wide">Encrypted Message Board</h2>
+            <p className="text-sm gold-text-soft mb-6 max-w-xl mx-auto leading-relaxed">
                 You will see messages encrypted for you (to decrypt in ETH.Build) and messages you sent.
             </p>
 
             {filtered.length === 0 ? (
-                <p className="text-center text-slate-500 text-sm">
+                <p className="text-center gold-text-soft text-md font-medium py-6">
                     No messages yet.
                 </p>
             ) : (
@@ -37,24 +37,21 @@ const MessageBoard = ({ walletAddress }) => {
                     {filtered.map((msg, idx) => (
                         <div
                             key={idx}
-                            className="bg-slate-900/60 border border-slate-700 rounded-lg p-3"
+                            className="rounded-2xl p-6 bg-black/40 backdrop-blur-md border border-yellow-500/30 shadow-lg transition-all duration-300 hover:bg-black/60"
                         >
-                            <p className="text-xs text-slate-400 mb-1">
-                                From:{" "}
-                                <span className="font-mono">
-                                    {msg.from.slice(0, 6)}...{msg.from.slice(-4)}
-                                </span>{" "}
-                                → To:{" "}
-                                <span className="font-mono">
-                                    {msg.to.slice(0, 6)}...{msg.to.slice(-4)}
-                                </span>
+                            <p className="text-xs text-yellow-300 mb-3 text-center space-x-2 tracking-wide">
+                                <span className="gold-text">From:</span>
+                                <span className="font-mono">{msg.from.slice(0, 6)}...{msg.from.slice(-4)}</span>
+                                <span className="mx-2 text-slate-500">→</span>
+                                <span className="gold-text">To:</span>
+                                <span className="font-mono">{msg.to.slice(0, 6)}...{msg.to.slice(-4)}</span>
                             </p>
 
                             <textarea
                                 readOnly
-                                className="w-full bg-slate-950 border border-slate-700 p-2 text-xs font-mono h-24"
                                 value={msg.ciphertext}
-                            />
+                                className="w-full bg-black/30 text-yellow-100 border border-yellow-500/40 rounded-xl p-3 text-xs font-mono h-40 resize-none shadow-inner focus:outline-none"
+                            ></textarea>
                         </div>
                     ))}
                 </div>

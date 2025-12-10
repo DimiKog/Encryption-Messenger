@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_BASE = "http://localhost:5001/api";
+const API_BASE = "https://dltlabs-api.dimikog.org/api";
 
 const PublicKeyRegistry = ({ walletAddress }) => {
     const [publicKeys, setPublicKeys] = useState([]);
     const [nickname, setNickname] = useState("");
     const [publicKey, setPublicKey] = useState("");
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const loadKeys = async () => {
-        const res = await axios.get(`${API_BASE}/public-keys`);
-        setPublicKeys(res.data || []);
+        try {
+            const res = await axios.get(`${API_BASE}/public-keys`);
+            console.log("API Response:", res.data); // 🔍 Debugging: Check console for this
+            setPublicKeys(res.data || []);
+        } catch (err) {
+            console.error("Failed to load public keys", err);
+            setError("Failed to load key list.");
+        }
     };
 
     useEffect(() => {
@@ -22,38 +29,50 @@ const PublicKeyRegistry = ({ walletAddress }) => {
         if (!walletAddress || !publicKey) return;
 
         setLoading(true);
-        await axios.post(`${API_BASE}/public-keys`, {
-            address: walletAddress,
-            public_key: publicKey,
-            nickname,
-        });
-        setPublicKey("");
-        setNickname("");
-        await loadKeys();
+        setError("");
+
+        try {
+            await axios.post(`${API_BASE}/public-keys`, {
+                address: walletAddress,
+                public_key: publicKey,
+                nickname,
+            });
+
+            setPublicKey("");
+            setNickname("");
+            await loadKeys();
+        } catch (err) {
+            console.error("Failed to submit key:", err);
+            setError("Could not submit key. Please try again.");
+        }
+
         setLoading(false);
     };
 
     return (
-        <div className="bg-slate-800/80 border border-slate-700 rounded-xl p-4">
-            <h2 className="text-lg font-semibold mb-3">Public Key Registry</h2>
+        <div className="glass-gold gold-border-soft rounded-2xl p-8 text-center space-y-6 max-w-xl mx-auto">
+            <h2 className="text-2xl font-bold gold-text mb-4 tracking-wide">
+                Public Key Registry
+            </h2>
 
-            {/* Submit Form */}
+            {error && <p className="text-red-400 text-sm">{error}</p>}
+
             <div className="space-y-3 mb-6">
-                <p className="text-sm text-slate-400">
+                <p className="text-sm gold-text-soft max-w-xl mx-auto">
                     Submit the public key you generated in ETH.Build to allow others to encrypt messages for you.
                 </p>
 
                 <input
                     type="text"
                     placeholder="Nickname (optional)"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm"
+                    className="w-full gold-input text-sm"
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                 />
 
                 <textarea
                     placeholder="Paste your public key here"
-                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm h-20"
+                    className="w-full gold-input text-sm h-24 font-mono"
                     value={publicKey}
                     onChange={(e) => setPublicKey(e.target.value)}
                 />
@@ -61,40 +80,53 @@ const PublicKeyRegistry = ({ walletAddress }) => {
                 <button
                     onClick={submitKey}
                     disabled={loading}
-                    className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50"
+                    className="gold-button"
                 >
                     {loading ? "Submitting..." : "Submit Public Key"}
                 </button>
             </div>
 
-            {/* Public Key Table */}
             <div>
-                <h3 className="font-semibold text-sm mb-2">Registered Keys</h3>
+                <h3 className="font-semibold text-lg gold-text-soft mb-3">Registered Keys</h3>
 
-                <div className="overflow-x-auto border border-slate-700 rounded-lg">
-                    <table className="w-full text-sm">
-                        <thead className="bg-slate-900/60 border-b border-slate-700">
-                            <tr>
-                                <th className="px-3 py-2 text-left">Nickname</th>
-                                <th className="px-3 py-2 text-left">Address</th>
-                                <th className="px-3 py-2">Public Key</th>
+                <div className="overflow-x-auto rounded-2xl bg-gradient-to-b from-black via-zinc-900 to-black border border-amber-500 shadow-[0_0_25px_rgba(255,180,0,0.25)] p-2">
+                    <table className="w-full text-sm text-white">
+                        <thead className="bg-black/80 border-b border-amber-500">
+                            <tr className="text-amber-300 text-left font-semibold">
+                                <th className="px-4 py-3">Nickname</th>
+                                <th className="px-4 py-3">Address</th>
+                                <th className="px-4 py-3">Public Key</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {publicKeys.map((pk, idx) => (
-                                <tr key={idx} className="border-b border-slate-700/50">
-                                    <td className="px-3 py-2">{pk.nickname || "-"}</td>
-                                    <td className="px-3 py-2 font-mono">
-                                        {pk.address.slice(0, 6)}...{pk.address.slice(-4)}
+                                <tr
+                                    key={idx}
+                                    className="hover:bg-zinc-800 transition-all border-b border-zinc-800/80"
+                                >
+                                    <td className="px-4 py-3 text-white font-medium">
+                                        {pk.nickname || "-"}
                                     </td>
-                                    <td className="px-3 py-2 font-mono break-all">{pk.public_key}</td>
+
+                                    <td className="px-4 py-3 font-mono text-white">
+                                        {pk.address
+                                            ? `${pk.address.slice(0, 6)}...${pk.address.slice(-4)}`
+                                            : "Unknown"}
+                                    </td>
+
+                                    <td className="px-4 py-3 font-mono text-amber-200 break-all">
+                                        {pk.public_key || "No Key Provided"}
+                                    </td>
                                 </tr>
                             ))}
 
                             {publicKeys.length === 0 && (
                                 <tr>
-                                    <td colSpan="3" className="px-3 py-4 text-center text-slate-500">
+                                    <td
+                                        colSpan="3"
+                                        className="px-4 py-6 text-center text-zinc-300 italic"
+                                    >
                                         No public keys submitted yet.
                                     </td>
                                 </tr>
