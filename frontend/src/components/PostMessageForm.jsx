@@ -1,12 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const API_BASE = "https://dltlabs-api.dimikog.org/api";
 
 const PostMessageForm = ({ walletAddress }) => {
     const [recipient, setRecipient] = useState("");
+    const [recipients, setRecipients] = useState([]);
     const [ciphertext, setCiphertext] = useState("");
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchRecipients = async () => {
+            try {
+                const res = await axios.get(`${API_BASE}/public-keys`);
+                setRecipients(res.data || []);
+            } catch (err) {
+                console.error("Failed to load recipients", err);
+            }
+        };
+        fetchRecipients();
+    }, []);
 
     const sendMessage = async () => {
         if (!recipient || !ciphertext) return;
@@ -30,13 +43,19 @@ const PostMessageForm = ({ walletAddress }) => {
                 Encrypt your message in ETH.Build then paste the ciphertext here.
             </p>
 
-            <input
-                type="text"
-                placeholder="Recipient Address"
-                className="w-full px-3 py-2 bg-slate-900 text-white placeholder-slate-400 border border-slate-700 rounded text-sm focus:outline-none focus:border-yellow-400 mb-4"
+            <select
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
-            />
+                className="w-full px-3 py-2 bg-slate-900 text-white border border-slate-700 rounded text-sm focus:outline-none focus:border-yellow-400 mb-4"
+            >
+                <option value="">Select recipient</option>
+                {recipients.map((entry) => (
+                    <option key={entry.address} value={entry.address}>
+                        {entry.nickname ? `${entry.nickname} — ${entry.address.slice(0, 6)}...${entry.address.slice(-4)}`
+                            : `${entry.address.slice(0, 6)}...${entry.address.slice(-4)}`}
+                    </option>
+                ))}
+            </select>
 
             <textarea
                 placeholder="Encrypted message (ciphertext)"
