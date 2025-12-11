@@ -24,11 +24,19 @@ const PostMessageForm = ({ walletAddress }) => {
     const sendMessage = async () => {
         if (!recipient || !ciphertext) return;
 
+        if (recipient.toLowerCase() === walletAddress.toLowerCase()) {
+            alert("You cannot send an encrypted message to yourself.");
+            return;
+        }
+
+        const confirmed = window.confirm("Are you sure you want to send this encrypted message?");
+        if (!confirmed) return;
+
         setLoading(true);
         await axios.post(`${API_BASE}/messages`, {
             from: walletAddress,
             to: recipient,
-            ciphertext,
+            ciphertext: ciphertext.trim(),
         });
 
         setRecipient("");
